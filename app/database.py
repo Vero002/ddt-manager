@@ -1,6 +1,6 @@
 import os
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -12,7 +12,8 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
-# 👇 QUESTA FUNZIONE TI MANCA
+Base = declarative_base()
+
 def get_db():
     db = SessionLocal()
     try:
