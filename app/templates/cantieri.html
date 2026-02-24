@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Cantieri</h2>
+
+<form method="post">
+    Nome: <input type="text" name="nome">
+    Indirizzo: <input type="text" name="indirizzo">
+    <button type="submit">Aggiungi</button>
+</form>
+
+<ul>
+{% for c in cantieri %}
+    <li>{{ c.id }} - {{ c.nome }} - {{ c.indirizzo }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

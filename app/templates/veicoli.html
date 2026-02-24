@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Veicoli</h2>
+
+<form method="post">
+    Targa: <input type="text" name="targa">
+    Modello: <input type="text" name="modello">
+    <button type="submit">Aggiungi</button>
+</form>
+
+<ul>
+{% for v in veicoli %}
+    <li>{{ v.id }} - {{ v.targa }} - {{ v.modello }}</li>
+{% endfor %}
+</ul>
+{% endblock %}
