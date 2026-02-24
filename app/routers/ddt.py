@@ -1,10 +1,13 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from sqlalchemy.orm import Session
-from datetime import date
 from app.database import SessionLocal
 from app import models
+from fastapi.templating import Jinja2Templates
 
-router = APIRouter(prefix="/ddt", tags=["DDT"])
+router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
+
 
 def get_db():
     db = SessionLocal()
@@ -13,26 +16,37 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/")
+
+@router.get("/ddt", response_class=HTMLResponse)
+def lista_ddt(request: Request, db: Session = Depends(get_db)):
+    ddt = db.query(models.DDT).all()
+    veicoli = db.query(models.Veicolo).all()
+    cantieri = db.query(models.Cantiere).all()
+
+    return templates.TemplateResponse("ddt.html", {
+        "request": request,
+        "ddt": ddt,
+        "veicoli": veicoli,
+        "cantieri": cantieri
+    })
+
+
+@router.post("/ddt")
 def crea_ddt(
-    numero: str,
-    descrizione: str,
-    veicolo_id: int,
-    cantiere_id: int,
+    numero: str = Form(...),
+    descrizione: str = Form(...),
+    veicolo_id: int = Form(...),
+    cantiere_id: int = Form(...),
     db: Session = Depends(get_db)
 ):
     nuovo_ddt = models.DDT(
         numero=numero,
-        data=date.today(),
         descrizione=descrizione,
         veicolo_id=veicolo_id,
         cantiere_id=cantiere_id
     )
+
     db.add(nuovo_ddt)
     db.commit()
-    db.refresh(nuovo_ddt)
-    return nuovo_ddt
 
-@router.get("/")
-def lista_ddt(db: Session = Depends(get_db)):
-    return db.query(models.DDT).all()
+    return RedirectResponse("/ddt", status_code=303)

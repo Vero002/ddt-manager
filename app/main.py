@@ -7,8 +7,6 @@ from app.database import SessionLocal, engine
 from app import models
 from app.routers import ddt, veicoli, cantieri
 
-models.Base.metadata.create_all(bind=engine)
-
 app = FastAPI()
 
 templates = Jinja2Templates(directory="app/templates")
@@ -16,6 +14,12 @@ templates = Jinja2Templates(directory="app/templates")
 app.include_router(ddt.router)
 app.include_router(veicoli.router)
 app.include_router(cantieri.router)
+
+
+# CREA TABELLE ALL'AVVIO (modo sicuro)
+@app.on_event("startup")
+def startup():
+    models.Base.metadata.create_all(bind=engine)
 
 
 def get_db():
@@ -32,11 +36,14 @@ def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 
-# PAGINA VEICOLI
+# VEICOLI
 @app.get("/ui/veicoli", response_class=HTMLResponse)
 def pagina_veicoli(request: Request, db: Session = Depends(get_db)):
     lista = db.query(models.Veicolo).all()
-    return templates.TemplateResponse("veicoli.html", {"request": request, "veicoli": lista})
+    return templates.TemplateResponse(
+        "veicoli.html",
+        {"request": request, "veicoli": lista},
+    )
 
 
 @app.post("/ui/veicoli")
@@ -51,11 +58,14 @@ def crea_veicolo(
     return RedirectResponse("/ui/veicoli", status_code=303)
 
 
-# PAGINA CANTIERI
+# CANTIERI
 @app.get("/ui/cantieri", response_class=HTMLResponse)
 def pagina_cantieri(request: Request, db: Session = Depends(get_db)):
     lista = db.query(models.Cantiere).all()
-    return templates.TemplateResponse("cantieri.html", {"request": request, "cantieri": lista})
+    return templates.TemplateResponse(
+        "cantieri.html",
+        {"request": request, "cantieri": lista},
+    )
 
 
 @app.post("/ui/cantieri")
@@ -70,20 +80,20 @@ def crea_cantiere(
     return RedirectResponse("/ui/cantieri", status_code=303)
 
 
-# PAGINA DDT
+# DDT
 @app.get("/ui/ddt", response_class=HTMLResponse)
 def pagina_ddt(request: Request, db: Session = Depends(get_db)):
     lista = db.query(models.DDT).all()
-    veicoli = db.query(models.Veicolo).all()
-    cantieri = db.query(models.Cantiere).all()
+    lista_veicoli = db.query(models.Veicolo).all()
+    lista_cantieri = db.query(models.Cantiere).all()
 
     return templates.TemplateResponse(
         "ddt.html",
         {
             "request": request,
             "ddt": lista,
-            "veicoli": veicoli,
-            "cantieri": cantieri,
+            "veicoli": lista_veicoli,
+            "cantieri": lista_cantieri,
         },
     )
 
