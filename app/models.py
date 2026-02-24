@@ -1,36 +1,25 @@
-from sqlalchemy import Column, Integer, String, Date, ForeignKey, DECIMAL
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
 from app.database import Base
 
+class DDT(Base):
+    __tablename__ = "ddt"
 
-class Cantiere(Base):
-    __tablename__ = "Cantieri"
-
-    Id = Column(Integer, primary_key=True, index=True)
-    Nome = Column(String)
-    Indirizzo = Column(String)
-    Citta = Column(String)
+    id = Column(Integer, primary_key=True, index=True)
+    numero = Column(String, index=True)
+    cliente = Column(String)
 
 
 class Veicolo(Base):
-    __tablename__ = "Veicoli"
+    __tablename__ = "veicoli"
 
-    Id = Column(Integer, primary_key=True, index=True)
-    Targa = Column(String)
-    Descrizione = Column(String)
+    id = Column(Integer, primary_key=True, index=True)
+    targa = Column(String, index=True)
+    modello = Column(String)
 
 
-class DDT(Base):
-    __tablename__ = "DDT"
+class Cantiere(Base):
+    __tablename__ = "cantieri"
 
-    Id = Column(Integer, primary_key=True, index=True)
-    NumeroDDT = Column(String)
-    DataDDT = Column(Date)
-    CantiereId = Column(Integer, ForeignKey("Cantieri.Id"))
-    VeicoloId = Column(Integer, ForeignKey("Veicoli.Id"))
-    Materiale = Column(String)
-    Quantita = Column(DECIMAL)
-    Note = Column(String)
-
-    cantiere = relationship("Cantiere")
-    veicolo = relationship("Veicolo")
+    id = Column(Integer, primary_key=True, index=True)
+    nome = Column(String)
+    indirizzo = Column(String)
