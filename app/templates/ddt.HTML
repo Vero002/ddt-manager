@@ -25,7 +25,11 @@
 
 <ul>
 {% for d in ddt %}
-    <li>{{ d.numero }} - {{ d.descrizione }}</li>
+    <li>
+        {{ d.numero }} -
+        {{ d.descrizione }} -
+        {{ d.veicolo.targa if d.veicolo else "Nessun veicolo" }} -
+        {{ d.cantiere.nome if d.cantiere else "Nessun cantiere" }}
+    </li>
 {% endfor %}
 </ul>
-{% endblock %}
