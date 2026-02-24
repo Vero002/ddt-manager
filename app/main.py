@@ -19,8 +19,8 @@ app.include_router(cantieri.router)
 # CREA TABELLE ALL'AVVIO (modo sicuro)
 @app.on_event("startup")
 def startup():
-    models.Base.metadata.create_all(bind=engine)
-
+    models.Base.metadata.drop_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)
 
 def get_db():
     db = SessionLocal()
