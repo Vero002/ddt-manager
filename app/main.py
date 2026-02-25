@@ -5,9 +5,9 @@ from app.routers import ddt, veicoli, cantieri
 
 app = FastAPI()
 
-
 @app.on_event("startup")
 def startup():
+    models.Base.metadata.drop_all(bind=engine)
     models.Base.metadata.create_all(bind=engine)
 
 
