@@ -1,76 +1,46 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard DDT</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        .cards { display: flex; gap: 20px; }
-        .card {
-            padding: 20px;
-            background: #f2f2f2;
-            border-radius: 10px;
-            width: 200px;
-            text-align: center;
-            font-size: 18px;
-        }
-        table {
-            margin-top: 40px;
-            border-collapse: collapse;
-            width: 100%;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-        }
-        th {
-            background-color: #333;
-            color: white;
-        }
-    </style>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 
-<h1>📊 Dashboard DDT</h1>
+<h2>Dashboard DDT</h2>
 
-<div class="cards">
-    <div class="card">
-        <b>Totale DDT</b><br>
-        {{ totale_ddt }}
-    </div>
+<form method="get" action="/dashboard">
 
-    <div class="card">
-        <b>Quantità Totale</b><br>
-        {{ totale_quantita }}
-    </div>
+    <label>Città:</label>
+    <input type="text" name="citta" value="{{ citta or '' }}">
 
-    <div class="card">
-        <b>Cantieri</b><br>
-        {{ totale_cantieri }}
-    </div>
+    <label>Veicolo:</label>
+    <select name="veicolo_id">
+        <option value="">Tutti</option>
+        {% for v in veicoli %}
+        <option value="{{ v.id }}"
+            {% if veicolo_id and veicolo_id == v.id %}selected{% endif %}>
+            {{ v.targa }} - {{ v.modello }}
+        </option>
+        {% endfor %}
+    </select>
 
-    <div class="card">
-        <b>Veicoli</b><br>
-        {{ totale_veicoli }}
-    </div>
-</div>
+    <button type="submit">Filtra</button>
+</form>
 
-<h2>📦 Riepilogo per Cantiere</h2>
+<hr>
 
-<table>
+<h3>Risultati</h3>
+
+<table border="1">
     <tr>
+        <th>Numero</th>
+        <th>Descrizione</th>
+        <th>Veicolo</th>
         <th>Cantiere</th>
-        <th>Numero DDT</th>
-        <th>Totale Quantità</th>
     </tr>
-
-    {% for r in report %}
+    {% for d in ddt %}
     <tr>
-        <td>{{ r.Cantiere }}</td>
-        <td>{{ r.NumeroDDT }}</td>
-        <td>{{ r.TotaleQuantita }}</td>
+        <td>{{ d.numero }}</td>
+        <td>{{ d.descrizione }}</td>
+        <td>{{ d.veicolo.targa }}</td>
+        <td>{{ d.cantiere.indirizzo }}</td>
     </tr>
     {% endfor %}
 </table>
 
-</body>
-</html>
+{% endblock %}

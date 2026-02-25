@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from app.database import SessionLocal, engine
 from app import models
-from app.routers import ddt, veicoli, cantieri
+from app.routers import ddt, veicoli, cantieri, dashboard
 
 app = FastAPI()
 templates = Jinja2Templates(directory="app/templates")
@@ -19,6 +19,7 @@ def startup():
 app.include_router(ddt.router)
 app.include_router(veicoli.router)
 app.include_router(cantieri.router)
+app.include_router(dashboard.router)
 
 @app.get("/", response_class=HTMLResponse)
 def home(request: Request):
