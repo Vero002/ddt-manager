@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Gestione DDT</h2>
+
+<hr>
+
+<h3>Nuovo DDT</h3>
+
+<form method="post" action="/ui/ddt">
+    <div>
+        <label>Numero:</label>
+        <input type="text" name="numero" required>
+    </div>
+
+    <div>
+        <label>Descrizione:</label>
+        <input type="text" name="descrizione" required>
+    </div>
+
+    <div>
+        <label>Veicolo:</label>
+        <select name="veicolo_id" required>
+            {% for v in veicoli %}
+                <option value="{{ v.id }}">{{ v.targa }} - {{ v.modello }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div>
+        <label>Cantiere:</label>
+        <select name="cantiere_id" required>
+            {% for c in cantieri %}
+                <option value="{{ c.id }}">{{ c.nome }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <br>
+    <button type="submit">Crea DDT</button>
+</form>
+
+<hr>
+
+<h3>Lista DDT</h3>
+
+<table border="1" cellpadding="5">
+    <thead>
+        <tr>
+            <th>Numero</th>
+            <th>Descrizione</th>
+            <th>Veicolo</th>
+            <th>Cantiere</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for d in ddt %}
+        <tr>
+            <td>{{ d.numero }}</td>
+            <td>{{ d.descrizione }}</td>
+            <td>
+                {% if d.veicolo %}
+                    {{ d.veicolo.targa }}
+                {% else %}
+                    Nessun veicolo
+                {% endif %}
+            </td>
+            <td>
+                {% if d.cantiere %}
+                    {{ d.cantiere.nome }}
+                {% else %}
+                    Nessun cantiere
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}
