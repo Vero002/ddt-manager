@@ -1,46 +1,66 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h2>Dashboard DDT</h2>
+<h2>Dashboard Gestionale</h2>
 
-<form method="get" action="/dashboard"> 
+<form method="get">
 
-    <label>Città:</label>
-    <input type="text" name="citta" value="{{ citta or '' }}">
+    Data da:
+    <input type="date" name="data_da">
 
-    <label>Veicolo:</label>
+    Data a:
+    <input type="date" name="data_a">
+
+    Veicolo:
     <select name="veicolo_id">
         <option value="">Tutti</option>
         {% for v in veicoli %}
-        <option value="{{ v.id }}"
-            {% if veicolo_id and veicolo_id == v.id %}selected{% endif %}>
-            {{ v.targa }} - {{ v.modello }}
-        </option>
+        <option value="{{ v.id }}">{{ v.targa }}</option>
+        {% endfor %}
+    </select>
+
+    Cantiere:
+    <select name="cantiere_id">
+        <option value="">Tutti</option>
+        {% for c in cantieri %}
+        <option value="{{ c.id }}">{{ c.impianto }}</option>
         {% endfor %}
     </select>
 
     <button type="submit">Filtra</button>
 </form>
 
-<hr>
-
-<h3>Risultati</h3>
+<br>
 
 <table border="1">
     <tr>
-        <th>Numero</th>
-        <th>Descrizione</th>
-        <th>Veicolo</th>
+        <th>Data</th>
+        <th>Targa</th>
         <th>Cantiere</th>
+        <th>N° DDT</th>
+        <th>MC Totali</th>
+        <th>Totale €</th>
     </tr>
-    {% for d in ddt %}
+
+    {% for r in risultati %}
     <tr>
-        <td>{{ d.numero }}</td>
-        <td>{{ d.descrizione }}</td>
-        <td>{{ d.veicolo.targa }}</td>
-        <td>{{ d.cantiere.indirizzo }}</td>
+        <td>{{ r.data }}</td>
+        <td>{{ r.targa }}</td>
+        <td>{{ r.impianto }}</td>
+        <td>{{ r.numero_ddt }}</td>
+        <td>{{ r.tot_mc }}</td>
+        <td>{{ r.totale_euro }}</td>
     </tr>
     {% endfor %}
 </table>
+
+<br>
+
+<h3>Totale Generale</h3>
+
+<p>
+    MC Totali: <strong>{{ totale_mc }}</strong> <br>
+    Totale €: <strong>{{ totale_euro }}</strong>
+</p>
 
 {% endblock %}

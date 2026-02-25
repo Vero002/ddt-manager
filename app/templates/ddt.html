@@ -1,80 +1,99 @@
 {% extends "base.html" %}
-
 {% block content %}
-<h2>Gestione DDT</h2>
 
-<hr>
+<h2>Nuovo DDT</h2>
 
-<h3>Nuovo DDT</h3>
+<form method="post">
 
-<form method="post" action="/ddt">
-    <div>
-        <label>Numero:</label>
-        <input type="text" name="numero" required>
+    Numero DDT:
+    <input type="text" name="numero_ddt" required><br><br>
+
+    Data:
+    <input type="date" name="data" required><br><br>
+
+    Impianto:
+    <input type="text" name="impianto" required><br><br>
+
+    Codice Radiale:
+    <input type="text" name="materiale" required><br><br>
+
+    MC:
+    <input type="number" step="0.01" name="mc" value="8" required><br><br>
+
+    Sosta minuti:
+    <input type="number" name="sosta_minuti" value="0"><br><br>
+
+    Trasferta:
+    <select name="trasferta" id="trasferta_select" onchange="toggleTrasferta()">
+        <option value="no">No</option>
+        <option value="si">Si</option>
+    </select><br><br>
+
+    <div id="trasferta_fields" style="display:none;">
+        KM Trasferta:
+        <input type="number" step="0.01" name="km_trasferta"><br><br>
     </div>
 
-    <div>
-        <label>Descrizione:</label>
-        <input type="text" name="descrizione" required>
-    </div>
+    Veicolo:
+    <select name="veicolo_id" required>
+        {% for v in veicoli %}
+        <option value="{{ v.id }}">{{ v.targa }}</option>
+        {% endfor %}
+    </select><br><br>
 
-    <div>
-        <label>Veicolo:</label>
-        <select name="veicolo_id" required>
-            {% for v in veicoli %}
-                <option value="{{ v.id }}">{{ v.targa }} - {{ v.modello }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    Cantiere:
+    <select name="cantiere_id" required>
+        {% for c in cantieri %}
+        <option value="{{ c.id }}">{{ c.impianto }}</option>
+        {% endfor %}
+    </select><br><br>
 
-    <div>
-        <label>Cantiere:</label>
-        <select name="cantiere_id" required>
-            {% for c in cantieri %}
-                <option value="{{ c.id }}">{{ c.nome }}</option>
-            {% endfor %}
-        </select>
-    </div>
+    Note:
+    <textarea name="note"></textarea><br><br>
 
-    <br>
-    <button type="submit">Crea DDT</button>
+    <button type="submit">Salva DDT</button>
 </form>
 
 <hr>
 
-<h3>Lista DDT</h3>
+<h2>Lista DDT</h2>
 
-<table border="1" cellpadding="5">
-    <thead>
-        <tr>
-            <th>Numero</th>
-            <th>Descrizione</th>
-            <th>Veicolo</th>
-            <th>Cantiere</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for d in ddt %}
-        <tr>
-            <td>{{ d.numero }}</td>
-            <td>{{ d.descrizione }}</td>
-            <td>
-                {% if d.veicolo %}
-                    {{ d.veicolo.targa }}
-                {% else %}
-                    Nessun veicolo
-                {% endif %}
-            </td>
-            <td>
-                {% if d.cantiere %}
-                    {{ d.cantiere.nome }}
-                {% else %}
-                    Nessun cantiere
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
+<table border="1">
+<tr>
+    <th>Numero</th>
+    <th>Data</th>
+    <th>Impianto</th>
+    <th>Radiale</th>
+    <th>MC</th>
+    <th>Veicolo</th>
+    <th>Cantiere</th>
+</tr>
+
+{% for d in ddt %}
+<tr>
+    <td>{{ d.numero_ddt }}</td>
+    <td>{{ d.data }}</td>
+    <td>{{ d.impianto }}</td>
+    <td>{{ d.materiale }}</td>
+    <td>{{ d.mc }}</td>
+    <td>{{ d.veicolo.targa }}</td>
+    <td>{{ d.cantiere.impianto }}</td>
+</tr>
+{% endfor %}
+
 </table>
+
+<script>
+function toggleTrasferta() {
+    var select = document.getElementById("trasferta_select");
+    var fields = document.getElementById("trasferta_fields");
+
+    if (select.value === "si") {
+        fields.style.display = "block";
+    } else {
+        fields.style.display = "none";
+    }
+}
+</script>
 
 {% endblock %}
