@@ -3,14 +3,13 @@
 <h2>Cantieri</h2>
 
 <form method="post">
-    Nome: <input type="text" name="nome">
-    Indirizzo: <input type="text" name="indirizzo">
+    Impianto: <input type="text" name="impianto">
     <button type="submit">Aggiungi</button>
 </form>
 
 <ul>
 {% for c in cantieri %}
-    <li>{{ c.id }} - {{ c.nome }} - {{ c.indirizzo }}</li>
+    <li>{{ c.id }} - {{ c.impianto }}</li>
 {% endfor %}
 </ul>
 {% endblock %}

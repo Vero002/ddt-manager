@@ -25,11 +25,10 @@ def pagina_cantieri(request: Request, db: Session = Depends(get_db)):
 
 @router.post("/cantieri")
 def crea_cantiere(
-    nome: str = Form(...),
-    indirizzo: str = Form(...),
+    impianto: str = Form(...),
     db: Session = Depends(get_db)
 ):
-    nuovo = models.Cantiere(nome=nome, indirizzo=indirizzo)
+    nuovo = models.Cantiere(impianto=impianto)
     db.add(nuovo)
     db.commit()
     return RedirectResponse("/cantieri", status_code=303)

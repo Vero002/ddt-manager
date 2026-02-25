@@ -17,8 +17,8 @@ class Cantiere(Base):
     __tablename__ = "cantieri"
 
     id = Column(Integer, primary_key=True, index=True)
-    nome = Column(String, nullable=False)
-    indirizzo = Column(String, nullable=False)
+    impianto = Column(String, nullable=False)
+
 
     ddt = relationship("DDT", back_populates="cantiere")
 
@@ -35,3 +35,4 @@ class DDT(Base):
 
     veicolo = relationship("Veicolo", back_populates="ddt")
     cantiere = relationship("Cantiere", back_populates="ddt")
+    
