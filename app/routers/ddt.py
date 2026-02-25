@@ -5,10 +5,10 @@ from datetime import datetime
 from app.database import SessionLocal
 from app import models
 from fastapi.templating import Jinja2Templates
+from app.auth import get_current_user
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
-
 
 RADIALI = {
     "R1": 11.80,
@@ -19,8 +19,6 @@ RADIALI = {
     "R10": 17.30,
     "R12": 18.40,
 }
-
-
 def get_db():
     db = SessionLocal()
     try:
@@ -29,8 +27,15 @@ def get_db():
         db.close()
 
 
+# -----------------------------
+# LISTA DDT (PROTETTA)
+# -----------------------------
 @router.get("/ddt", response_class=HTMLResponse)
-def lista_ddt(request: Request, db: Session = Depends(get_db)):
+def lista_ddt(
+    request: Request,
+    user = Depends(get_current_user),  # 🔐 protezione
+    db: Session = Depends(get_db)
+):
     ddt = db.query(models.DDT).all()
     veicoli = db.query(models.Veicolo).all()
     cantieri = db.query(models.Cantiere).all()
@@ -43,6 +48,9 @@ def lista_ddt(request: Request, db: Session = Depends(get_db)):
     })
 
 
+# -----------------------------
+# CREA DDT
+# -----------------------------
 @router.post("/ddt")
 def crea_ddt(
     numero_ddt: str = Form(...),
@@ -61,6 +69,7 @@ def crea_ddt(
     mc: float = Form(8),
     veicolo_id: int = Form(...),
     cantiere_id: int = Form(...),
+    user = Depends(get_current_user),  # 🔐 protezione anche qui
     db: Session = Depends(get_db)
 ):
 
