@@ -1,9 +1,12 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import models
 
-router = APIRouter(prefix="/veicoli", tags=["Veicoli"])
+router = APIRouter()
+templates = Jinja2Templates(directory="app/templates")
 
 def get_db():
     db = SessionLocal()
@@ -12,14 +15,21 @@ def get_db():
     finally:
         db.close()
 
-@router.post("/")
-def crea_veicolo(targa: str, modello: str, db: Session = Depends(get_db)):
-    veicolo = models.Veicolo(targa=targa, modello=modello)
-    db.add(veicolo)
-    db.commit()
-    db.refresh(veicolo)
-    return veicolo
+@router.get("/veicoli", response_class=HTMLResponse)
+def pagina_veicoli(request: Request, db: Session = Depends(get_db)):
+    veicoli = db.query(models.Veicolo).all()
+    return templates.TemplateResponse("veicoli.html", {
+        "request": request,
+        "veicoli": veicoli
+    })
 
-@router.get("/")
-def lista_veicoli(db: Session = Depends(get_db)):
-    return db.query(models.Veicolo).all()
+@router.post("/veicoli")
+def crea_veicolo(
+    targa: str = Form(...),
+    modello: str = Form(...),
+    db: Session = Depends(get_db)
+):
+    nuovo = models.Veicolo(targa=targa, modello=modello)
+    db.add(nuovo)
+    db.commit()
+    return RedirectResponse("/veicoli", status_code=303)
